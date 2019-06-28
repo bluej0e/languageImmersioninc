@@ -1,16 +1,14 @@
 <?php
 /**
- * The Sidebar containing the main widget areas.
+ * The sidebar containing the main widget area.
  *
- * @package Edin
+ * @link https://developer.wordpress.org/themes/basics/template-files/#template-partials
+ *
+ * @package Business_Point
  */
+
 ?>
 
-	<?php if ( is_active_sidebar( 'sidebar-1' ) ) : ?>
-	<div id="secondary" class="widget-area" role="complementary">
-		<?php do_action( 'before_sidebar' ); ?>
-		<?php dynamic_sidebar( 'sidebar-1' ); ?>
-	</div><!-- #secondary -->
-	<?php endif; ?>
-
-</div><!-- .content-wrapper -->
+<aside id="sidebar-primary" class="widget-area sidebar" role="complementary">
+	<?php dynamic_sidebar( 'sidebar-1' ); ?>
+</aside><!-- #secondary -->

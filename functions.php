@@ -1,31 +1,13 @@
 <?php
 /**
- * Edin functions and definitions
+ * Business Point functions and definitions.
  *
- * @package Edin
+ * @link https://developer.wordpress.org/themes/basics/theme-functions/
+ *
+ * @package Business_Point
  */
 
-/**
- * Set the content width based on the theme's design and stylesheet.
- */
-if ( ! isset( $content_width ) ) {
-	$content_width = 648; /* pixels */
-}
-
-if ( ! function_exists( 'edin_content_width' ) ) :
-
-	function edin_content_width() {
-		global $content_width;
-
-		if ( is_page_template( 'page-templates/front-page.php' ) || is_page_template( 'page-templates/full-width-page.php' ) || is_page_template( 'page-templates/grid-page.php' ) ) {
-			$content_width = 930;
-		}
-	}
-
-endif;
-add_action( 'template_redirect', 'edin_content_width' );
-
-if ( ! function_exists( 'edin_setup' ) ) :
+if ( ! function_exists( 'business_point_setup' ) ) :
 /**
  * Sets up theme defaults and registers support for various WordPress features.
  *
@@ -33,19 +15,16 @@ if ( ! function_exists( 'edin_setup' ) ) :
  * runs before the init hook. The init hook is too late for some features, such
  * as indicating support for post thumbnails.
  */
-function edin_setup() {
-
+function business_point_setup() {
 	/*
 	 * Make theme available for translation.
 	 * Translations can be filed in the /languages/ directory.
-	 * If you're building a theme based on Edin, use a find and replace
-	 * to change 'edin' to the name of your theme in all the template files
+	 * If you're building a theme based on Business Way, use a find and replace
+	 * to change 'business-point' to the name of your theme in all the template files.
 	 */
-	load_theme_textdomain( 'edin', get_template_directory() . '/languages' );
+	load_theme_textdomain( 'business-point' );
 
-	/*
-	 * Add default posts and comments RSS feed links to head.
-	 */
+	// Add default posts and comments RSS feed links to head.
 	add_theme_support( 'automatic-feed-links' );
 
 	/*
@@ -57,24 +36,27 @@ function edin_setup() {
 	add_theme_support( 'title-tag' );
 
 	/*
-	 * Enable support for Post Thumbnails on posts and pages.
-	 *
-	 * @link http://codex.wordpress.org/Function_Reference/add_theme_support#Post_Thumbnails
+	 * Enable support for custom logo.
 	 */
-	add_theme_support( 'post-thumbnails' );
-	add_image_size( 'edin-thumbnail-landscape', 330, 240, true );
-	add_image_size( 'edin-thumbnail-square', 330, 330, true );
-	add_image_size( 'edin-thumbnail-avatar', 96, 96, true );
-	add_image_size( 'edin-featured-image', 648, 9999 );
-	add_image_size( 'edin-hero', 1230, 1230, true );
+	add_theme_support( 'custom-logo', array(
+                'height'      => 70,
+                'width'       => 220,
+	) );
 
 	/*
-	 * This theme uses wp_nav_menu() in one location.
+	 * Enable support for Post Thumbnails on posts and pages.
+	 *
+	 * @link https://developer.wordpress.org/themes/functionality/featured-images-post-thumbnails/
 	 */
+	add_theme_support( 'post-thumbnails' );
+	add_image_size('business-point-long', 370, 500, true);
+	add_image_size('business-point-small', 370, 235, true);
+
+	// Register navigation menu locations.
 	register_nav_menus( array(
-		'primary'   => __( 'Primary Menu', 'edin' ),
-		'secondary' => __( 'Secondary Menu', 'edin' ),
-		'footer'    => __( 'Footer Menu', 'edin' ),
+		'top' 		=> esc_html__( 'Top Header', 'business-point' ),
+		'primary' 	=> esc_html__( 'Primary Header', 'business-point' ),
+		'social'  	=> esc_html__( 'Social Links', 'business-point' ),
 	) );
 
 	/*
@@ -82,306 +64,166 @@ function edin_setup() {
 	 * to output valid HTML5.
 	 */
 	add_theme_support( 'html5', array(
-		'search-form', 'comment-form', 'comment-list', 'gallery', 'caption'
+		'search-form',
+		'comment-form',
+		'comment-list',
+		'gallery',
+		'caption',
 	) );
 
-	/*
-	 * Enable support for Post Formats.
-	 * See http://codex.wordpress.org/Post_Formats
-	 */
-	add_theme_support( 'post-formats', array(
-		'aside', 'image', 'video', 'quote', 'link', 'status', 'gallery',
-	) );
-
-	/*
-	 * Editor styles.
-	 */
-	add_editor_style( array( 'editor-style.css', edin_pt_sans_font_url(), edin_pt_serif_font_url(), edin_pt_mono_font_url() ) );
-
-	/*
-	 * Enable support for Excerpt on Pages.
-	 * See http://codex.wordpress.org/Excerpt
-	 */
-	add_post_type_support( 'page', 'excerpt' );
-
-	/*
-	 * Setup the WordPress core custom background feature.
-	 */
-	add_theme_support( 'custom-background', apply_filters( 'edin_custom_background_args', array(
+	// Set up the WordPress core custom background feature.
+	add_theme_support( 'custom-background', apply_filters( 'business_point_custom_background_args', array(
 		'default-color' => 'ffffff',
 		'default-image' => '',
 	) ) );
-
-	/**
-	 * Add support for Eventbrite.
-	 * See: https://wordpress.org/plugins/eventbrite-api/
-	 */
-	add_theme_support( 'eventbrite' );
 }
-endif; // edin_setup
-add_action( 'after_setup_theme', 'edin_setup' );
+endif;
+add_action( 'after_setup_theme', 'business_point_setup' );
+
+/**
+ * Set the content width in pixels, based on the theme's design and stylesheet.
+ *
+ * Priority 0 to make it available to lower priority callbacks.
+ *
+ * @global int $content_width
+ */
+function business_point_content_width() {
+	$GLOBALS['content_width'] = apply_filters( 'business_point_content_width', 810 );
+}
+add_action( 'after_setup_theme', 'business_point_content_width', 0 );
 
 /**
  * Register widget area.
  *
- * @link http://codex.wordpress.org/Function_Reference/register_sidebar
+ * @link https://developer.wordpress.org/themes/functionality/sidebars/#registering-a-sidebar
  */
-function edin_widgets_init() {
+function business_point_widgets_init() {
 	register_sidebar( array(
-		'name'          => __( 'Sidebar', 'edin' ),
+		'name'          => esc_html__( 'Sidebar', 'business-point' ),
 		'id'            => 'sidebar-1',
-		'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-		'after_widget'  => '</aside>',
-		'before_title'  => '<h2 class="widget-title">',
-		'after_title'   => '</h2>',
+		'description'   => esc_html__( 'Add widgets here to appear in Sidebar.', 'business-point' ),
+		'before_widget' => '<section id="%1$s" class="widget %2$s">',
+		'after_widget'  => '</section>',
+		'before_title'  => '<h3 class="widget-title">',
+		'after_title'   => '</h3>',
 	) );
 	register_sidebar( array(
-		'name'          => __( 'Footer One', 'edin' ),
-		'id'            => 'sidebar-2',
-		'description'   => __( 'Use this widget area to display widgets in the first column of the footer', 'edin' ),
-		'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-		'after_widget'  => '</aside>',
-		'before_title'  => '<h2 class="widget-title">',
-		'after_title'   => '</h2>',
+		'name'          => esc_html__( 'Home Page Widget Area', 'business-point' ),
+		'id'            => 'home-page-widget-area',
+		'description'   => esc_html__( 'Add widgets here to appear in Home Page Widget Area.', 'business-point' ),
+		'before_widget' => '<section id="%1$s" class="widget %2$s"><div class="container">',
+		'after_widget'  => '</div></section>',
+		'before_title'  => '<h3 class="widget-title">',
+		'after_title'   => '</h3>',
 	) );
 	register_sidebar( array(
-		'name'          => __( 'Footer Two', 'edin' ),
-		'id'            => 'sidebar-3',
-		'description'   => __( 'Use this widget area to display widgets in the second column of the footer', 'edin' ),
-		'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-		'after_widget'  => '</aside>',
-		'before_title'  => '<h2 class="widget-title">',
-		'after_title'   => '</h2>',
+		'name'          => sprintf( esc_html__( 'Footer %d', 'business-point' ), 1 ),
+		'id'            => 'footer-1',
+		'before_widget' => '<section id="%1$s" class="widget %2$s">',
+		'after_widget'  => '</section>',
+		'before_title'  => '<h4 class="widget-title">',
+		'after_title'   => '</h4>',
 	) );
 	register_sidebar( array(
-		'name'          => __( 'Footer Three', 'edin' ),
-		'id'            => 'sidebar-4',
-		'description'   => __( 'Use this widget area to display widgets in the third column of the footer', 'edin' ),
-		'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-		'after_widget'  => '</aside>',
-		'before_title'  => '<h2 class="widget-title">',
-		'after_title'   => '</h2>',
+		'name'          => sprintf( esc_html__( 'Footer %d', 'business-point' ), 2 ),
+		'id'            => 'footer-2',
+		'before_widget' => '<section id="%1$s" class="widget %2$s">',
+		'after_widget'  => '</section>',
+		'before_title'  => '<h4 class="widget-title">',
+		'after_title'   => '</h4>',
 	) );
 	register_sidebar( array(
-		'name'          => __( 'Front Page One', 'edin' ),
-		'id'            => 'sidebar-5',
-		'description'   => __( 'Use this widget area to display widgets in the first column of your Front Page', 'edin' ),
-		'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-		'after_widget'  => '</aside>',
-		'before_title'  => '<h2 class="widget-title">',
-		'after_title'   => '</h2>',
+		'name'          => sprintf( esc_html__( 'Footer %d', 'business-point' ), 3 ),
+		'id'            => 'footer-3',
+		'before_widget' => '<section id="%1$s" class="widget %2$s">',
+		'after_widget'  => '</section>',
+		'before_title'  => '<h4 class="widget-title">',
+		'after_title'   => '</h4>',
 	) );
 	register_sidebar( array(
-		'name'          => __( 'Front Page Two', 'edin' ),
-		'id'            => 'sidebar-6',
-		'description'   => __( 'Use this widget area to display widgets in the second column of your Front Page', 'edin' ),
-		'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-		'after_widget'  => '</aside>',
-		'before_title'  => '<h2 class="widget-title">',
-		'after_title'   => '</h2>',
-	) );
-	register_sidebar( array(
-		'name'          => __( 'Front Page Three', 'edin' ),
-		'id'            => 'sidebar-7',
-		'description'   => __( 'Use this widget area to display widgets in the third column of your Front Page', 'edin' ),
-		'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-		'after_widget'  => '</aside>',
-		'before_title'  => '<h2 class="widget-title">',
-		'after_title'   => '</h2>',
+		'name'          => sprintf( esc_html__( 'Footer %d', 'business-point' ), 4 ),
+		'id'            => 'footer-4',
+		'before_widget' => '<section id="%1$s" class="widget %2$s">',
+		'after_widget'  => '</section>',
+		'before_title'  => '<h4 class="widget-title">',
+		'after_title'   => '</h4>',
 	) );
 }
-add_action( 'widgets_init', 'edin_widgets_init' );
+add_action( 'widgets_init', 'business_point_widgets_init' );
 
 /**
- * Register PT Sans font for Edin.
- *
- * @return string
- */
-function edin_pt_sans_font_url() {
-	$pt_sans_font_url = '';
+* Enqueue scripts and styles.
+*/
+function business_point_scripts() {
 
-	/* translators: If there are characters in your language that are not supported
-	 * by PT Sans, translate this to 'off'. Do not translate into your own language.
-	 */
-	if ( 'off' !== _x( 'on', 'PT Sans font: on or off', 'edin' ) ) {
-		$subsets = 'latin,latin-ext';
+	wp_enqueue_style( 'business-point-fonts', business_point_fonts_url(), array(), null );
 
-		/* translators: To add an additional PT Sans character subset specific to your language, translate this to 'cyrillic'. Do not translate into your own language. */
-		$subset = _x( 'no-subset', 'PT Sans font: add new subset (cyrillic)', 'edin' );
+	wp_enqueue_style( 'jquery-meanmenu', get_template_directory_uri() . '/assets/third-party/meanmenu/meanmenu.css' );
 
-		if ( 'cyrillic' == $subset ) {
-			$subsets .= ',cyrillic-ext,cyrillic';
-		}
+	wp_enqueue_style( 'jquery-slick', get_template_directory_uri() . '/assets/third-party/slick/slick.css', '', '1.6.0' );
 
-		$query_args = array(
-			'family' => urlencode( 'PT Sans:400,700,400italic,700italic' ),
-			'subset' => urlencode( $subsets ),
-		);
+	wp_enqueue_style( 'font-awesome', get_template_directory_uri() . '/assets/third-party/font-awesome/css/font-awesome.min.css', '', '4.7.0' );
 
-		$pt_sans_font_url = add_query_arg( $query_args, 'https://fonts.googleapis.com/css' );
+	wp_enqueue_style( 'business-point-style', get_stylesheet_uri() );
+
+	wp_enqueue_script( 'business-point-navigation', get_template_directory_uri() . '/assets/js/navigation.js', array(), '20151215', true );
+
+	wp_enqueue_script( 'business-point-skip-link-focus-fix', get_template_directory_uri() . '/assets/js/skip-link-focus-fix.js', array(), '20151215', true );
+
+	wp_enqueue_script( 'jquery-cycle2', get_template_directory_uri() . '/assets/third-party/cycle2/js/jquery.cycle2.min.js', array( 'jquery' ), '2.1.6', true );
+
+	wp_enqueue_script( 'jquery-meanmenu', get_template_directory_uri() . '/assets/third-party/meanmenu/jquery.meanmenu.js', array('jquery'), '2.0.2', true );
+
+	wp_enqueue_script( 'jquery-slick', get_template_directory_uri() . '/assets/third-party/slick/slick.js', array('jquery'), '1.6.0', true );
+
+	// Add script for sticky sidebar.
+	$sticky_sidebar = business_point_get_option( 'enable_sticky_sidebar' );
+
+	if( 1 == $sticky_sidebar ){
+
+		wp_enqueue_script( 'jquery-theia-sticky-sidebar', get_template_directory_uri() . '/assets/third-party/theia-sticky-sidebar/theia-sticky-sidebar.min.js', array('jquery'), '1.0.7', true );
+
 	}
 
-	return $pt_sans_font_url;
-}
-
-/**
- * Register PT Serif font for Edin.
- *
- * @return string
- */
-function edin_pt_serif_font_url() {
-	$pt_serif_font_url = '';
-
-	/* translators: If there are characters in your language that are not supported
-	 * by PT Serif, translate this to 'off'. Do not translate into your own language.
-	 */
-	if ( 'off' !== _x( 'on', 'PT Serif font: on or off', 'edin' ) ) {
-		$subsets = 'latin,latin-ext';
-
-		/* translators: To add an additional PT Serif character subset specific to your language, translate this to 'cyrillic'. Do not translate into your own language. */
-		$subset = _x( 'no-subset', 'PT Serif font: add new subset (cyrillic)', 'edin' );
-
-		if ( 'cyrillic' == $subset ) {
-			$subsets .= ',cyrillic-ext,cyrillic';
-		}
-
-		$query_args = array(
-			'family' => urlencode( 'PT Serif:400,700,400italic,700italic' ),
-			'subset' => urlencode( $subsets ),
-		);
-
-		$pt_serif_font_url = add_query_arg( $query_args, 'https://fonts.googleapis.com/css' );
-	}
-
-	return $pt_serif_font_url;
-}
-
-/**
- * Register PT Mono font for Edin.
- *
- * @return string
- */
-function edin_pt_mono_font_url() {
-	$pt_mono_font_url = '';
-
-	/* translators: If there are characters in your language that are not supported
-	 * by PT Mono, translate this to 'off'. Do not translate into your own language.
-	 */
-	if ( 'off' !== _x( 'on', 'PT Mono font: on or off', 'edin' ) ) {
-		$subsets = 'latin,latin-ext';
-
-		/* translators: To add an additional PT Mono character subset specific to your language, translate this to 'cyrillic'. Do not translate into your own language. */
-		$subset = _x( 'no-subset', 'PT Mono font: add new subset (cyrillic)', 'edin' );
-
-		if ( 'cyrillic' == $subset ) {
-			$subsets .= ',cyrillic-ext,cyrillic';
-		}
-
-		$query_args = array(
-			'family' => urlencode( 'PT Mono' ),
-			'subset' => urlencode( $subsets ),
-		);
-
-		$pt_mono_font_url = add_query_arg( $query_args, 'https://fonts.googleapis.com/css' );
-	}
-
-	return $pt_mono_font_url;
-}
-
-/**
- * Enqueue scripts and styles.
- */
-function edin_scripts() {
-	wp_enqueue_style( 'edin-pt-sans', edin_pt_sans_font_url(), array(), null );
-
-	wp_enqueue_style( 'edin-pt-serif', edin_pt_serif_font_url(), array(), null );
-
-	wp_enqueue_style( 'edin-pt-mono', edin_pt_mono_font_url(), array(), null );
-
-	wp_enqueue_style( 'edin-edincon', get_template_directory_uri() . '/font/edincon.css', array(), '20140606' );
-
-	if ( wp_style_is( 'genericons', 'registered' ) ) {
-		wp_enqueue_style( 'genericons' );
-	} else {
-		wp_enqueue_style( 'genericons', get_template_directory_uri() . '/font/genericons.css', array(), '3.4.1' );
-	}
-
-	wp_enqueue_style( 'edin-style', get_stylesheet_uri() );
-
-	wp_enqueue_script( 'edin-navigation', get_template_directory_uri() . '/js/navigation.js', array( 'jquery' ), '20140718', true );
-	wp_localize_script( 'edin-navigation', 'screen_reader_text', array(
-		'expand'   => '<span class="screen-reader-text">' . __( 'expand child menu', 'edin' ) . '</span>',
-		'collapse' => '<span class="screen-reader-text">' . __( 'collapse child menu', 'edin' ) . '</span>',
-	) );
-
-	if ( 1 == get_theme_mod( 'edin_search_header' ) ) {
-		wp_enqueue_script( 'edin-search', get_template_directory_uri() . '/js/search.js', array( 'jquery' ), '20140707', true );
-	}
-
-	wp_enqueue_script( 'edin-skip-link-focus-fix', get_template_directory_uri() . '/js/skip-link-focus-fix.js', array(), '20130115', true );
+	wp_enqueue_script( 'business-point-custom', get_template_directory_uri() . '/assets/js/custom.js', array( 'jquery' ), '2.1.2', true );
 
 	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
 		wp_enqueue_script( 'comment-reply' );
 	}
+        
+        $enable_sticky = business_point_get_option('enable_sticky');
 
-	wp_enqueue_script( 'edin-script', get_template_directory_uri() . '/js/edin.js', array( 'jquery' ), '20140606', true );
-	wp_localize_script( 'edin-script', 'screen_reader_text', array(
-		'expand'   => '<span class="screen-reader-text">' . __( 'expand child menu', 'edin' ) . '</span>',
-		'collapse' => '<span class="screen-reader-text">' . __( 'collapse child menu', 'edin' ) . '</span>',
-	) );
+        if (true === $enable_sticky) {
+
+            wp_enqueue_script('jquery-sticky', get_template_directory_uri() . '/assets/third-party/sticky/jquery.sticky.js', array('jquery'), '1.0.4', true);
+
+            wp_enqueue_script('pt-magazine-custom-sticky', get_template_directory_uri() . '/assets/third-party/sticky/custom-sticky.js', array('jquery-sticky'), '1.0.4', true);
+        }
 }
-add_action( 'wp_enqueue_scripts', 'edin_scripts' );
+add_action( 'wp_enqueue_scripts', 'business_point_scripts' );
 
 /**
- * Enqueue Google fonts style to admin screen for custom header display.
- *
- * @return void
- */
-function edin_admin_fonts() {
-	wp_enqueue_style( 'edin-pt-sans', edin_pt_sans_font_url(), array(), null );
+* Enqueue scripts and styles for admin >> widget page only.
+*/
+function business_point_admin_scripts( $hook ) {
 
-	wp_enqueue_style( 'edin-pt-serif', edin_pt_serif_font_url(), array(), null );
+	if( 'widgets.php' === $hook ){
 
-	wp_enqueue_style( 'edin-pt-mono', edin_pt_mono_font_url(), array(), null );
+		wp_enqueue_style( 'business-point-admin', get_template_directory_uri() . '/includes/widgets/css/admin.css', array(), '2.1.2' );
+
+		wp_enqueue_media();
+
+		wp_enqueue_script( 'business-point-admin', get_template_directory_uri() . '/includes/widgets/js/admin.js', array( 'jquery' ), '2.0.1' );
+
+	}
+
 }
-add_action( 'admin_print_scripts-appearance_page_custom-header', 'edin_admin_fonts' );
 
-/**
- * Remove the separator from Eventbrite events meta.
- */
-function edin_remove_meta_separator() {
-	return false;
-}
-add_filter( 'eventbrite_meta_separator', 'edin_remove_meta_separator' );
+add_action( 'admin_enqueue_scripts', 'business_point_admin_scripts' );
 
-/**
- * Implement the Custom Header feature.
- */
-require get_template_directory() . '/inc/custom-header.php';
+// Load main file.
+require_once trailingslashit( get_template_directory() ) . '/includes/main.php';
 
-/**
- * Custom template tags for this theme.
- */
-require get_template_directory() . '/inc/template-tags.php';
-
-/**
- * Custom functions that act independently of the theme templates.
- */
-require get_template_directory() . '/inc/extras.php';
-
-/**
- * Customizer additions.
- */
-require get_template_directory() . '/inc/customizer.php';
-
-/**
- * Load Jetpack compatibility file.
- */
-require get_template_directory() . '/inc/jetpack.php';
-
-
-
-/**
- * Load plugin enhancement file to display admin notices.
- */
-require get_template_directory() . '/inc/plugin-enhancements.php';
+/* Turn on wide images */
+add_theme_support( 'align-wide' );
+       

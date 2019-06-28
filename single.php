@@ -1,40 +1,35 @@
 <?php
 /**
- * The Template for displaying all single posts.
+ * The template for displaying all single posts.
  *
- * @package Edin
+ * @link https://developer.wordpress.org/themes/basics/template-hierarchy/#single-post
+ *
+ * @package Business_Point
  */
 
 get_header(); ?>
 
-	<div class="content-wrapper clear">
+	<div id="primary" class="content-area">
+		<main id="main" class="site-main" role="main">
 
-		<div id="primary" class="content-area">
-			<main id="main" class="site-main" role="main">
+		<?php
+		while ( have_posts() ) : the_post();
 
-				<?php while ( have_posts() ) : the_post(); ?>
+			get_template_part( 'template-parts/content', 'single' );
 
-					<?php
-						if ( 'jetpack-testimonial' === get_post_type() ) {
-							get_template_part( 'content', 'testimonial' );
-						} else {
-							get_template_part( 'content', 'single' );
-						}
-						?>
+			the_post_navigation();
 
-					<?php edin_post_nav(); ?>
+			// If comments are open or we have at least one comment, load up the comment template.
+			if ( comments_open() || get_comments_number() ) :
+				comments_template();
+			endif;
 
-					<?php
-						// If comments are open or we have at least one comment, load up the comment template
-						if ( ( comments_open() || '0' != get_comments_number() ) && 'jetpack-testimonial' != get_post_type() ) :
-							comments_template();
-						endif;
-					?>
+		endwhile; // End of the loop.
+		?>
 
-				<?php endwhile; // end of the loop. ?>
+		</main><!-- #main -->
+	</div><!-- #primary -->
 
-			</main><!-- #main -->
-		</div><!-- #primary -->
-
-<?php get_sidebar(); ?>
-<?php get_footer(); ?>
+<?php
+do_action( 'business_point_action_sidebar' );
+get_footer();

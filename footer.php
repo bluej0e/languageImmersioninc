@@ -2,39 +2,39 @@
 /**
  * The template for displaying the footer.
  *
- * Contains the closing of the #content div and all content after
+ * Contains the closing of the #content div and all content after.
  *
- * @package Edin
+ * @link https://developer.wordpress.org/themes/basics/template-files/#template-partials
+ *
+ * @package Business_Point
  */
+
+	/**
+	 * Hook - business_point_after_content.
+	 *
+	 * @hooked business_point_after_content_action - 10
+	 */
+	do_action( 'business_point_after_content' );
+
 ?>
 
-	</div><!-- #content -->
-
-	<?php get_sidebar( 'footer' ); ?>
+	<?php get_template_part( 'template-parts/footer-widgets' ); ?>
 
 	<footer id="colophon" class="site-footer" role="contentinfo">
-		<div class="footer-wrapper clear">
-			<div class="site-info">
-				<a href="<?php echo esc_url( __( 'http://wordpress.org/', 'edin' ) ); ?>"><?php printf( __( 'Proudly powered by %s', 'edin' ), 'WordPress' ); ?></a>
-				<span class="sep"> | </span>
-				<?php printf( __( 'Theme: %1$s by %2$s.', 'edin' ), 'Edin', '<a href="http://wordpress.com/themes/edin/" rel="designer">WordPress.com</a>' ); ?>
-			</div><!-- .site-info -->
-			<?php if ( has_nav_menu( 'footer' ) ) : ?>
-				<nav class="footer-navigation" role="navigation">
-					<?php
-						wp_nav_menu( array(
-							'theme_location'  => 'footer',
-							'menu_class'      => 'clear',
-							'depth'           => 1,
-						) );
-					?>
-				</nav><!-- .footer-navigation -->
+		<div class="container">
+			<?php $copyright_text = business_point_get_option( 'copyright_text' ); ?>
+			<?php if ( ! empty( $copyright_text ) ) : ?>
+				<div class="copyright">
+					<?php echo wp_kses_data( $copyright_text ); ?>
+				</div><!-- .copyright -->
 			<?php endif; ?>
-		</div><!-- .footer-wrapper -->
+
+			<?php do_action( 'business_point_credit' ); ?>
+			
+		</div><!-- .container -->
 	</footer><!-- #colophon -->
 </div><!-- #page -->
 
 <?php wp_footer(); ?>
-
 </body>
 </html>
